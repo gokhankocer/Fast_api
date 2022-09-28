@@ -1,5 +1,18 @@
-from pydantic import BaseModel
-from typing import Optional
+from pydantic import BaseModel, EmailStr
+from typing import Optional, List
+
+
+class UserCreate(BaseModel):
+    email: EmailStr
+    hashed_password: str
+
+
+class UserOut(BaseModel):
+    id: int
+    email: EmailStr
+
+    class Config:
+        orm_mode = True
 
 
 class PostBase(BaseModel):
@@ -7,9 +20,12 @@ class PostBase(BaseModel):
     content: str
 
 
-class Post(PostBase):
-    id: int
 
+class PostResponse(PostBase):
+    id: int
+    published: bool = True
+    user_id = int
+    user = UserOut
     class Config:
         orm_mode = True
 
@@ -18,13 +34,16 @@ class PostCreate(PostBase):
     pass
 
 
-class Item(BaseModel):
-    name: str
-    price: float
-    brand: Optional[str] = None
+class UserLogin(BaseModel):
+    email: EmailStr
+    hashed_password: str
 
 
-class UpdateItem(BaseModel):
-    name: Optional[str] = None
-    price: Optional[float] = None
-    brand: Optional[str] = None
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class TokenData(BaseModel):
+    id: Optional[str]= None
